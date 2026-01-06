@@ -370,11 +370,11 @@ if not pair_df.empty:
             # Smart Direction
             lower_is_better = True
             if outcome_type == 'Efficacy':
-                good_keywords = ['free', 'without', 'neda', 'no']
+                good_keywords = ['free', 'without', 'no', "brain", "grey", "neda"]
                 if any(k in row['Outcome'].lower() for k in good_keywords):
                     lower_is_better = False
             elif outcome_type == 'Safety':
-                lower_is_better = not invert_safety
+                lower_is_better = True
 
             # Decision
             if row['Effect_Size'] < null_val:
@@ -410,11 +410,7 @@ if not pair_df.empty:
                     col_a, col_b = st.columns([3, 1])
                     with col_a: st.markdown("**Safety Logic:** Standard (Lower is Better).")
                     with col_b:
-                        if st.checkbox("🔄 Invert Direction", key=f"inv_{name}"):
-                            invert = True
-                            plot_data[['Significance', 'Color', 'Note']] = plot_data.apply(
-                                lambda row: pd.Series(get_winner_details(row, name, True)), axis=1
-                            )
+                      pass
 
                 for sm in plot_data['sm'].unique():
                     sub = plot_data[plot_data['sm'] == sm].drop_duplicates(subset=['Outcome'])
@@ -454,8 +450,8 @@ if not pair_df.empty:
                     )
 
                     # Annotations
-                    l_txt = f"<b>← Favors {drug_a if not invert else drug_b}</b>"
-                    r_txt = f"<b>Favors {drug_b if not invert else drug_a} →</b>"
+                    l_txt = f"<b>← {drug_a if not invert else drug_b}</b>"
+                    r_txt = f"<b> {drug_b if not invert else drug_a} →</b>"
                     fig.add_annotation(x=np.log10(x_min) if is_ratio else x_min, y=len(sub ) -0.5, text=l_txt, showarrow=False, xanchor="left", font=dict(color="#1f77b4", size=10))
                     fig.add_annotation(x=np.log10(x_max) if is_ratio else x_max, y=len(sub ) -0.5, text=r_txt, showarrow=False, xanchor="right", font=dict(color="#d62728", size=10))
 
